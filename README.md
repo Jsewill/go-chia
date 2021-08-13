@@ -1,7 +1,7 @@
 # Go Chia Blockchain
-## WARNING: This project is still in early alpha; nothing in this repository should be considered to work yet, everything may change.
+## WARNING: This project is still in early alpha; nothing in this repository should be considered to work yet, everything is likely to change.
 
-Go Chia endeavors to be an original, complete, and compatible client for the Chia Blockchain, written in Go (http://golang.org/). Our goal is to gain improved efficiency and code clarity over Chia Blockchain (https://github.com/Chia-Network/chia-blockchain/), while maintaining stable compatiblity.
+Go Chia endeavors to be an original, complete, and compatible client for the Chia Blockchain, written in Go (http://golang.org/). We hope to gain improved efficiency and code clarity over Chia Blockchain (https://github.com/Chia-Network/chia-blockchain/), while maintaining stable compatiblity.
 
 If you wish to donate toward the development of this project, please use any of the following addresses:
 
