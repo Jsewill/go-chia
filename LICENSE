@@ -19,3 +19,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+
+Chia is a trademark of the Chia Network. Visit http://chia.net/ for more information.
+This project endeavors to be an original, complete, and compatible Go client for the Chia Blockchain, and there are currently no plans to use the original Chia code. Should this change, a copy of the Chia license will be included with this project, and any necessary attributions will be made.
