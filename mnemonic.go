@@ -13,10 +13,12 @@ import (
 	"golang.org/x/crypto/pbkdf2"
 )
 
-type BitArray []int8
+// A byte slice of bits.
+type BitSlice []byte
 
-func BitsFromBytes(bs []byte) BitArray {
-	b = make([]int8, len(bs*8))
+// Converts a regular byte slice to a byte slice of bits.
+func bitsFromBytes(bs []byte) BitSlice {
+	b = make(BitSlice, len(bs*8))
 	var v byte
 	for i, _ := range bs {
 		v = bs[i]
@@ -32,23 +34,29 @@ func BitsFromBytes(bs []byte) BitArray {
 	return b
 }
 
+// Mnemonic representation of a private key.
 type Mnemonic []byte
 
-func (m Mnemonic) Bits() []BitArray {
-	ba := make(BitArray)
-	return BitsFromBytes(m.Bytes())
+// Returns the mnemonic byte slice as a bit slice.
+func (m Mnemonic) Bits() BitSlice {
+	ba := make(BitSlice)
+	return bitsFromBytes(m.ByteArray())
 }
 
-func (m Mnemonic) Bytes() [32]byte {
+// Returns mnemonic as a 32 item array of bytes.
+func (m Mnemonic) ByteArray() [32]byte {
 	var b [32]byte
 	copy(b[:], m[:])
 	return b
 }
 
+// Returns mnemonice as a byte slice.
 func (m Mnemonic) Entropy() []byte { return []byte(m) }
 
-func (m Mnemonic) IsValid() bool {}
+// Checks the integrity of the produced mnemonic.
+func (m Mnemonic) IsValid() bool { /* @TODO: build this out or discard if not needed.*/ }
 
+// Produces a seed from the mnemonic.
 func (m Mnemonic) Seed(p string) []byte {
 	salt := strings.Join("mnemonic", p)
 	seed := pbkdf2.Key(m, salt, 2048, sha512.New)
@@ -58,10 +66,12 @@ func (m Mnemonic) Seed(p string) []byte {
 	return seed
 }
 
+// Mainly for printing. @TODO: check that this code works as desired.
 func (m Mnemonic) String() string {
 	return fmt.Sprintf("%s", string(m))
 }
 
+// Creates a new mnemonic.
 func NewMnemonic() Mnemonic {
 	e := make([]byte, 32)
 	_, err := rand.Read(e)
@@ -74,6 +84,7 @@ func NewMnemonic() Mnemonic {
 	return NewMnemonicFromEntropy(e)
 }
 
+// Creates a mnemonic using supplied entropy.
 func NewMnemonicFromEntropy(e []byte) Mnemonic {
 	// Check for expected byte slice length
 	switch len(e) {
@@ -88,19 +99,19 @@ func NewMnemonicFromEntropy(e []byte) Mnemonic {
 	// Hash mnemonic bytes
 	h := sha256.New(e)
 	hsum := h.Sum(nil)
-	// Create a BitArray of said hash
+	// Create a BitSlice of said hash
 	hba := BitsFromBytes(hsum)
-	// Produce checksum from the BitArray and the bytes length
+	// Produce checksum from BitSlice and the bytes length
 	cs := hba[:len(e)]
-	// Create final BitArray
-	ba := make(BitArray)
+	// Create final BitSlice
+	ba := make(BitSlice)
 	ba.FromBytes(m)
 	// Append the bits from the checksum we created earlier
 	ba = append(ba, cs...)
 
 	// Check for some as yet unidentified problem. When would the length of ba be evenly divisible by 11?
 	if len(ba)%11 == 0 {
-		// @TODO: Figure out why this test, and possibly log problem with the final BitArray.
+		// @TODO: Figure out why this test, and possibly log problem with the final BitSlice.
 		return nil
 	}
 
@@ -116,9 +127,14 @@ func NewMnemonicFromEntropy(e []byte) Mnemonic {
 	return Mnemonic(m)
 }
 
+// Creates a mnemonic from a mnemonic string
 func NewMnemonicFromString(ms string) Mnemonic {
 	// Make sure our mnemonic has an appropriate word count
-	ma := strings.Split(ms, " ")
+	ma := strings.Fields(ms, " ")
+	if ma == []string{} {
+		return nil
+	}
+
 	switch len(ms) {
 	case 12, 15, 18, 21, 24:
 		break
@@ -129,7 +145,7 @@ func NewMnemonicFromString(ms string) Mnemonic {
 	}
 
 	// Get words for each bit
-	ba := make(BitArray)
+	ba := make(BitSlice)
 	for i, word := range ma {
 		if !WordListDictionary.Contains(word) {
 			// @TODO: handle missing dictionary word error
@@ -138,7 +154,7 @@ func NewMnemonicFromString(ms string) Mnemonic {
 		j, _ := WorldListDictionary[word]
 		wib := BitsFromBytes(j)
 		if len(wib) < 11 {
-			ba = append(ba, make([]int8, 11-len(wib))[:]...)
+			ba = append(ba, make(BitSlice, 11-len(wib))[:]...)
 		}
 		ba = append(ba, wib)
 
