@@ -43,7 +43,7 @@ func (m Mnemonic) Bits() BitSlice {
 	return bitsFromBytes(m.ByteArray())
 }
 
-// Returns mnemonic as a 32 item array of bytes.
+// Returns mnemonic as a 32 item byte array.
 func (m Mnemonic) ByteArray() [32]byte {
 	var b [32]byte
 	copy(b[:], m[:])
